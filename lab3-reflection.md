@@ -1,0 +1,16 @@
+1. Summary of Configurations: Concisely summarize the foundational security controls you configured in the four core areas:
+This lab focused on establishing a foundational security baseline within an AWS environment by implementing controls across 4 critical domains. In Identity and Access Management (IAM), my root account was secured with Multi-Factor Authentication (MFA) after I found out it wasn't enabled. Additionally, a restricted user group was created to enforce Role Based Access Control (RBAC). For Secure Storage (S3), "Block all public access" was enabled to provide privacy to my data. Next, in the Elastic Compute Cloud (EC2) section, I created a Security Group with rules that were strictly limited to a single IP for SSH access, and the Instance Metadata Service (IMDS) configuration was reviewed to prioritize IMDSv2. Lastly, I enabled a trail on CloudTrail for API logging, enabled AWS Config for resource tracking, and kept track of my Billing dashboard which is great for any detection of a compromise.
+
+2. Explicit Case Study Connection: Explicitly connect each of the four configured areas to a specific vulnerability or lesson learned from the Capital One breach:
+Identity and Access Management (IAM): The Capital One attacker Paige Thompson, exploited a misconfigured role known as the "*****-WAF-Role" (In the case study, it was blurred for confidental reasons). Since this role had confidential permissive credentials like the ability to list all S3 buckets and sync their contents, the attacker was able to take data after gaining initial access. In this lab I was creating a restricted IAM user and group with the minimum necessary permissions and it demonstrated how doing that limits the "blast radius" of a compromised credential, making sure an attacker cannot easily get access.
+
+Secure Storage (S3): Enabling "Block all public access" prevents mistakes like in the Capital One breach that could accidentally put personal data like names, addresses, or birth dates on the open internet.
+
+EC2: The attacker exploited a weak WAF to send requests to the Instance Metadata Service (IMDSv1) at the IP 169.254.169.254, which let the attacker pull temporary security credentials. In my lab, I focused on applying Security Groups and using IMDSv2 instead, which adds protection by requiring a session token.
+
+CloudTrail and AWS Config: The breach occurred on March 22 and 23, 2019, but Capital One did not identify it until July 19. They only found out because of an anonymous tip through their Responsible Disclosure Program. By setting up CloudTrail and AWS Config, I established the internal monitoring necessary to detect unauthorized activity.
+
+
+
+3. Critical Analysis
+S3’s "Block all public access" setting and the IAM RBAC felt like the strongest and easiest protections to get right. They create strong account level safety that are hard to bypass once set as defaults. On the other hand, I felt Security Groups and WAF rules are easy to misconfigure. As the case study showed, one bad firewall rule can open the door to an attack. The Capital One breach happened even though the company itself was a top cloud adopting US bank that followed strong security frameworks like NIST themself. It shows that culture and governance matter a lot.
